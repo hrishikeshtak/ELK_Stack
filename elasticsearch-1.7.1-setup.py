@@ -10,13 +10,13 @@ HOME_DIR="$HOME/elasticsearch";
 USER = "Hrishi";
 IP = "127.0.0.1";
 #############################################################
-# string = "mkdir -p " + HOME_DIR;
-# subprocess.call(string,shell=True);
-# 
-# subprocess.call("wget -P $HOME/elasticsearch https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.tar.gz",shell=True);
+string = "mkdir -p " + HOME_DIR;
+subprocess.call(string,shell=True);
+ 
+subprocess.call("wget -P $HOME/elasticsearch https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.tar.gz",shell=True);
 
 string = "tar -xvf "+ HOME_DIR + "/elasticsearch-1.7.1.tar.gz -C "+ HOME_DIR;
-# subprocess.call(string,shell=True);
+subprocess.call(string,shell=True);
 
 print"\n\nSetting elasticsearch.yml File";
 
@@ -44,7 +44,7 @@ subprocess.call(string,shell=True);
 print "\n\nRun the Webbrowser and check localhost:9200/_plugin/head";
 print "\n\nDone";
 
-
+subprocess.call("sleep 2",shell=True);
 subprocess.call("clear",shell=True);
 print "\n\nSetup LogStash-1.5.4\n";
 subprocess.call("wget -P $HOME/elasticsearch https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz",shell=True);
@@ -53,10 +53,14 @@ subprocess.call(string,shell=True);
 print "\n\nDone";
 
 
+subprocess.call("sleep 2",shell=True);
 subprocess.call("clear",shell=True);
 print "\n\nSetup Kibana4\n";
 subprocess.call("wget -P $HOME/elasticsearch https://download.elastic.co/kibana/kibana/kibana-4.1.1-linux-x64.tar.gz",shell=True);
 string = "tar -xvf "+ HOME_DIR + "/kibana-4.1.1-linux-x64.tar.gz -C "+ HOME_DIR;
+subprocess.call(string,shell=True);
+print "\n\nRun the Kibana";
+string = "nohup "+ HOME_DIR + "/kibana-4.1.1-linux-x64/bin/kibana &"
 subprocess.call(string,shell=True);
 
 print "\n\nDone";
