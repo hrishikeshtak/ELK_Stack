@@ -57,4 +57,4 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       under [ v3_ca ] section in the file.
 
     install_Logstash() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
-    install Logstash and we will required SSL Certificates .
+    install Logstash and create SSL Certificates .
