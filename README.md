@@ -19,7 +19,8 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
 
 1.  Install Java 8 : 
       Elasticsearch and Logstash require Java .
-      install_JAVA() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" install Oracle Java 8 .
+      install_JAVA() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      install Oracle Java 8 .
       
 2.  Install Elasticsearch :
 
@@ -31,7 +32,7 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       
         $ echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' | sudo tee /etc/apt/sources.list.d/elasticsearch.list 
         
-        "install_Elasticsearch()" function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh"
+        "install_Elasticsearch()" , function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh"
         install Elasticsearch
         
         The configuration file for elasticsearch is /etc/elasticsearch/elasticsearch.yml , 
@@ -39,6 +40,18 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
 
 3.  Install Kibana : 
 
-      install_Kibana() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
-      install kibana
+      install_Kibana() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      install kibana .
       
+      The kibana configuration file : /opt/kibana/config/kibana.yml , where we specify host ip , 
+      on which our kibana server will run.
+      
+4.  Install Logstash : 
+
+      install_Logstash() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      install Logstash and we will required SSL Certificates .
+      
+      Generate SSL Certificates
+      Since we are going to use Logstash Forwarder to ship logs from our Servers to our 
+      Logstash Server, we need to create an SSL certificate and key pair. The certificate 
+      is used by the Logstash Forwarder to verify the identity of Logstash Server.
