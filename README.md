@@ -48,10 +48,13 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       
 4.  Install Logstash : 
 
-      install_Logstash() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
-      install Logstash and we will required SSL Certificates .
+    Generate SSL Certificates :
       
-      Generate SSL Certificates
       Since we are going to use Logstash Forwarder to ship logs from our Servers to our 
       Logstash Server, we need to create an SSL certificate and key pair. The certificate 
       is used by the Logstash Forwarder to verify the identity of Logstash Server.
+      we have to add IP address of our server in /etc/ssl/openssl.cnf
+      under [ v3_ca ] section in the file.
+
+    install_Logstash() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+    install Logstash and we will required SSL Certificates .
