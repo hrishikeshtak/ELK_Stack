@@ -16,3 +16,15 @@ Our setup has four main components:
                     
   
 We will install Elasticsearch , Logstash and kibana on a single server and The Logstash Forwarder will be installed on all of the client servers that we want to gather logs from.
+
+1.  Install Java 8 : 
+      Elasticsearch and Logstash require Java .
+      install_JAVA() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" install Oracle Java 8 .
+      
+2.  Install Elasticsearch :
+      Run the following command to import the Elasticsearch public GPG key into apt:
+        $ wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+      Create the Elasticsearch source list:
+        $ echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' | sudo tee /etc/apt/sources.list.d/elasticsearch.list 
+        
+        install_Elasticsearch() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" install Elasticsearch
