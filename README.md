@@ -15,7 +15,7 @@ Our setup has four main components:
                     Kibana   <-   ElasticSearch    <-  Logstash    <-   Logstash Forwarder
                     
   
-We will install Elasticsearch , Logstash and kibana on a single server and The Logstash Forwarder will be installed on all of the client servers that we want to gather logs from.
+We will install Elasticsearch , Logstash and kibana on a single server called "ELK Server" and The Logstash Forwarder will be installed on all of the client called "Client Servers: that we want to gather logs from.
 
 1.  Install Java 8 : 
 
@@ -51,10 +51,11 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
 
     Generate SSL Certificates :
       
-      Since we are going to use Logstash Forwarder to ship logs from our Servers to our 
-      Logstash Server, we need to create an SSL certificate and key pair. The certificate 
-      is used by the Logstash Forwarder to verify the identity of Logstash Server.
-      we have to add IP address of our server in /etc/ssl/openssl.cnf
+      Since we are going to use Logstash Forwarder to ship logs from our client servers to our 
+      ELK Server, we need to create an SSL certificate and key pair. The certificate 
+      is used by the Logstash Forwarder to verify the identity of ELK Server.
+      
+      we have to add IP address of our ELK server in /etc/ssl/openssl.cnf
       under [ v3_ca ] section in the file.
 
     "install_Logstash()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
@@ -65,9 +66,26 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       Logstash configuration files are in the JSON-format, and reside in /etc/logstash/conf.d. 
       The configuration consists of three sections: inputs, filters, and outputs.
       
-      Let's create a configuration file called 01-lumberjack-input.conf and set up our 
-      "lumberjack" input (the protocol that Logstash Forwarder uses):
+      "configure_Logstash()"  function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      configure logstash.
+      
+6.  Set Up Logstash Forwarder (Add Client Servers) :
 
-        $ sudo vi /etc/logstash/conf.d/01-lumberjack-input.conf 
-
+      Copy SSL Certificate and Logstash Forwarder Package : 
+      
+      On ELK Server, copy the SSL certificate to Client Server (substitute the client server's 
+      address, and username).
+      
+        $ scp /etc/pki/tls/certs/logstash-forwarder.crt user@client_server_private_address:/tmp
+        
+        Now copy the ELK server's SSL certificate into the /etc/pki/tls/certs :
+        
+        $ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
+        
+        "install_Logstash_Forwarder()"  function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+        install logstash_forwarder.
+        
+  7.  Connect to Kibana : 
+  
+        In a web browser, go to the IP address of your ELK Server .
       
