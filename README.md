@@ -15,3 +15,4 @@ Our setup has four main components:
                     Kibana   <-   ElasticSearch    <-  Logstash    <-   Logstash Forwarder
                     
   
+We will install Elasticsearch , Logstash and kibana on a single server and The Logstash Forwarder will be installed on all of the client servers that we want to gather logs from.
