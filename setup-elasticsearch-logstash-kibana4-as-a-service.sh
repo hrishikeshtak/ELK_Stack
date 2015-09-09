@@ -122,12 +122,60 @@ install_Logstash_Forwarder() {
 # Function Calling
 
 variable_Declaration;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in variable_Declaration function\n";
+		exit 0;
+fi
+
 install_JAVA;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in install_JAVA function\n";
+		exit 0;
+fi
+
 install_Elasticsearch;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in install_Elasticsearch function\n";
+		exit 0;
+fi
+
 install_Kibana;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in install_Kibana function\n";
+		exit 0;
+fi
+
 install_Logstash;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in install_Logstash function\n";
+		exit 0;
+fi
+
 configure_Logstash;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in configure_Logstash function\n";
+		exit 0;
+fi
+
 install_Logstash_Forwarder;
+return_val=$(echo $?);
+if [ "$return_val" -gt 0 ]
+then
+		echo "\nError in install_Logstash_Forwarder function\n";
+		exit 0;
+fi
 
 sleep 2;
 clear;
