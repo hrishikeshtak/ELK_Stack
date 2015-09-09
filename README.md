@@ -18,8 +18,9 @@ Our setup has four main components:
 We will install Elasticsearch , Logstash and kibana on a single server and The Logstash Forwarder will be installed on all of the client servers that we want to gather logs from.
 
 1.  Install Java 8 : 
+
       Elasticsearch and Logstash require Java .
-      install_JAVA() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      "install_JAVA()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
       install Oracle Java 8 .
       
 2.  Install Elasticsearch :
@@ -40,7 +41,7 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
 
 3.  Install Kibana : 
 
-      install_Kibana() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      "install_Kibana()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
       install kibana .
       
       The kibana configuration file : /opt/kibana/config/kibana.yml , where we specify host ip , 
@@ -56,5 +57,17 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       we have to add IP address of our server in /etc/ssl/openssl.cnf
       under [ v3_ca ] section in the file.
 
-    install_Logstash() function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+    "install_Logstash()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
     install Logstash and create SSL Certificates .
+    
+5.  Configure Logstash : 
+
+      Logstash configuration files are in the JSON-format, and reside in /etc/logstash/conf.d. 
+      The configuration consists of three sections: inputs, filters, and outputs.
+      
+      Let's create a configuration file called 01-lumberjack-input.conf and set up our 
+      "lumberjack" input (the protocol that Logstash Forwarder uses):
+
+        $ sudo vi /etc/logstash/conf.d/01-lumberjack-input.conf 
+
+      
