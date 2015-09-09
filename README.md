@@ -22,9 +22,23 @@ We will install Elasticsearch , Logstash and kibana on a single server and The L
       install_JAVA() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" install Oracle Java 8 .
       
 2.  Install Elasticsearch :
+
       Run the following command to import the Elasticsearch public GPG key into apt:
+      
         $ wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+        
       Create the Elasticsearch source list:
+      
         $ echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' | sudo tee /etc/apt/sources.list.d/elasticsearch.list 
         
-        install_Elasticsearch() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" install Elasticsearch
+        "install_Elasticsearch()" function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh"
+        install Elasticsearch
+        
+        The configuration file for elasticsearch is /etc/elasticsearch/elasticsearch.yml , 
+        where we specify our configurations like cluster.name , network.host . 
+
+3.  Install Kibana : 
+
+      install_Kibana() function from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
+      install kibana
+      
