@@ -85,7 +85,7 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
         "install_Logstash_Forwarder()"  function , from script "setup-elasticsearch-logstash-kibana4-as-a-service.sh" 
         install logstash_forwarder.
         
-  7.  Connect to Kibana : 
+7.  Connect to Kibana : 
   
         In a web browser, go to the IP address of your ELK Server .
       
