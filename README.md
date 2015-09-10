@@ -20,6 +20,7 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
 1.  Install Java 8 : 
 
       Elasticsearch and Logstash require Java .
+      
       "install_JAVA()" function , from script 
       "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" install Oracle Java 8 .
       
