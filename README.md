@@ -20,8 +20,8 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
 1.  Install Java 8 : 
 
       Elasticsearch and Logstash require Java .
-      "install_JAVA()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
-      install Oracle Java 8 .
+      "install_JAVA()" function , from script 
+      "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" install Oracle Java 8 .
       
 2.  Install Elasticsearch :
 
@@ -33,16 +33,16 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
       
         $ echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' | sudo tee /etc/apt/sources.list.d/elasticsearch.list 
         
-        "install_Elasticsearch()" , function from script "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh"
-        install Elasticsearch
+        "install_Elasticsearch()" , function from script 
+        "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" install Elasticsearch
         
         The configuration file for elasticsearch is /etc/elasticsearch/elasticsearch.yml , 
         where we specify our configurations like cluster.name , network.host . 
 
 3.  Install Kibana : 
 
-      "install_Kibana()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
-      install kibana .
+      "install_Kibana()" function , from script 
+      "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" install kibana .
       
       The kibana configuration file : /opt/kibana/config/kibana.yml , where we specify host ip , 
       on which our kibana server will run.
@@ -58,7 +58,8 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
       we have to add IP address of our ELK server in /etc/ssl/openssl.cnf
       under [ v3_ca ] section in the file.
 
-    "install_Logstash()" function , from script "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
+    "install_Logstash()" function , from script 
+    "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
     install Logstash and create SSL Certificates .
     
 5.  Configure Logstash : 
@@ -66,7 +67,8 @@ We will install Elasticsearch , Logstash and kibana on a single server called "E
       Logstash configuration files are in the JSON-format, and reside in /etc/logstash/conf.d. 
       The configuration consists of three sections: inputs, filters, and outputs.
       
-      "configure_Logstash()"  function , from script "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
+      "configure_Logstash()"  function , from script 
+      "setup-elasticsearch-logstash-kibana4-as-a-service_ubuntu.sh" 
       configure logstash.
       
 6.  Set Up Logstash Forwarder (Add Client Servers) :
