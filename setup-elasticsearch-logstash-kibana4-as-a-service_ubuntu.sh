@@ -27,7 +27,7 @@ install_Elasticsearch() {
 		echo "\t\t2 Install Elasticsearch\n\n";
 		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 		echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
-		sudo apt-get update && sudo apt-get -y install elasticsearch;
+		sudo apt-get update && sudo apt-get -y install elasticsearch=1.7.1;
 		echo "\n\nConfiguring elasticsearch";
 		sudo sed -i -e "s/#cluster.name: elasticsearch/cluster.name: elasticsearch/" /etc/elasticsearch/elasticsearch.yml;
 		sudo sed -i -e "s/#network.host: 192.168.0.1/network.host: 0.0.0.0/" /etc/elasticsearch/elasticsearch.yml
@@ -42,30 +42,30 @@ install_Elasticsearch() {
 }
 ##################################################################################################
 install_Kibana() {
-		echo "\t\t3 Install Kibana4\n\n";
-		cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
-		tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
-# 		sed -ie "s/host: \"0.0.0.0\"/host: \"$IP_ADDRESS_SERVER\"/" ~/kibana-4.0.1-linux-x64/config/kibana.yml;
-		sudo mkdir -p /opt/kibana;
-		sudo cp -R ~/kibana-4*/* /opt/kibana/;
-		cd ~; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
-		sudo mv ~/kibana4 /etc/init.d;
-		sudo chmod +x /etc/init.d/kibana4;
-		echo "Starting kibana on boot up : \n\n";
-		sudo update-rc.d kibana4 defaults 96 9;
-		echo "Starting kibana : \n\n";
-		sudo service kibana4 start;
-# 		echo "Checking the status of kibana : \n\n";
-# 		sudo service kibana4 status;
-		sleep 2;
-		clear;
+	echo "\t\t3 Install Kibana4\n\n";
+	cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
+	tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
+# 	sed -ie "s/host: \"0.0.0.0\"/host: \"$IP_ADDRESS_SERVER\"/" ~/kibana-4.0.1-linux-x64/config/kibana.yml;
+	sudo mkdir -p /opt/kibana;
+	sudo cp -R ~/kibana-4*/* /opt/kibana/;
+	cd ~; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
+	sudo mv ~/kibana4 /etc/init.d;
+	sudo chmod +x /etc/init.d/kibana4;
+	echo "Starting kibana on boot up : \n\n";
+	sudo update-rc.d kibana4 defaults 96 9;
+	echo "Starting kibana : \n\n";
+	sudo service kibana4 start;
+# 	echo "Checking the status of kibana : \n\n";
+# 	sudo service kibana4 status;
+	sleep 2;
+	clear;
 }
 ##################################################################################################
 install_Logstash() {
 		echo "\t\t4 Install Logstash\n\n";
 		wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
 		echo "deb http://packages.elasticsearch.org/logstash/1.5/debian stable main" | sudo tee /etc/apt/sources.list.d/logstash.list;
-		sudo apt-get update && sudo apt-get install logstash -y;
+		sudo apt-get update && sudo apt-get -y install logstash=1:1.5.4-1;
 		echo "Generating SSL Certificates\n\n";
 		sudo mkdir -p /etc/pki/tls/certs;
 		sudo mkdir /etc/pki/tls/private;
