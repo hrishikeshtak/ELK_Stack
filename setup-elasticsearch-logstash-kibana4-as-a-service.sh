@@ -42,23 +42,23 @@ install_Elasticsearch() {
 }
 ##################################################################################################
 install_Kibana() {
-	echo "\t\t3 Install Kibana4\n\n";
-	cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
-	tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
-# 	sed -ie "s/host: \"0.0.0.0\"/host: \"$IP_ADDRESS_SERVER\"/" ~/kibana-4.0.1-linux-x64/config/kibana.yml;
-	sudo mkdir -p /opt/kibana;
-	sudo cp -R ~/kibana-4*/* /opt/kibana/;
-	cd ~; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
-	sudo mv ~/kibana4 /etc/init.d;
-	sudo chmod +x /etc/init.d/kibana4;
-	echo "Starting kibana on boot up : \n\n";
-	sudo update-rc.d kibana4 defaults 96 9;
-	echo "Starting kibana : \n\n";
-	sudo service kibana4 start;
-# 	echo "Checking the status of kibana : \n\n";
-# 	sudo service kibana4 status;
-	sleep 2;
-	clear;
+		echo "\t\t3 Install Kibana4\n\n";
+		cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
+		tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
+# 		sed -ie "s/host: \"0.0.0.0\"/host: \"$IP_ADDRESS_SERVER\"/" ~/kibana-4.0.1-linux-x64/config/kibana.yml;
+		sudo mkdir -p /opt/kibana;
+		sudo cp -R ~/kibana-4*/* /opt/kibana/;
+		cd ~; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
+		sudo mv ~/kibana4 /etc/init.d;
+		sudo chmod +x /etc/init.d/kibana4;
+		echo "Starting kibana on boot up : \n\n";
+		sudo update-rc.d kibana4 defaults 96 9;
+		echo "Starting kibana : \n\n";
+		sudo service kibana4 start;
+# 		echo "Checking the status of kibana : \n\n";
+# 		sudo service kibana4 status;
+		sleep 2;
+		clear;
 }
 ##################################################################################################
 install_Logstash() {
