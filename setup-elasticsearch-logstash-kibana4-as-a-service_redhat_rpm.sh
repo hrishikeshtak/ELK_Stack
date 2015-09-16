@@ -24,6 +24,11 @@ ES_CONF_FILE=/etc/elasticsearch/elasticsearch.yml;
 
 
 ####################################################################################################
+error_check() {
+		echo -e "\nERROR: $SCRIPT_NAME: at Line $2 : $1";
+		exit 0;
+}
+
 print_usage () {
 		echo -e "\nUsage: $0 <ES_LOCAL_IPADDR>  <LF_LOCAL_IPADDR> <NODE_ID>"
 		echo -e "    ES_LOCAL_IPADDR - IP address where Elastic search serves the search requests"
@@ -306,7 +311,7 @@ configure_Logstash() {
 				\n}" /etc/logstash/conf.d/30-lumberjack-output.conf;
 
 		echo -e "Coping SSL Certificate \n";
-		scp /etc/pki/tls/certs/logstash-forwarder.crt root@$LF_LOCAL_IPADDR:/tmp;
+		scp /etc/pki/tls/certs/logstash-forwarder.crt root@$LF_LOCAL_IPADDR:/tmp || { error_check scp-not-done-properly ${LINENO} ; };
 		echo -e "Starting logstash : \n\n";
 		systemctl start logstash.service;
 		sleep 2;
