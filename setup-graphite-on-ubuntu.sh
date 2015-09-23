@@ -91,11 +91,11 @@ validate_IP() {
 install_dependencies() {
 		cd $HOME;
 		apt-get update;
-		apt-get -y install graphite-web graphite-carbon;
-		apt-get -y install python-django;
-		apt-get -y install postgresql libpq-dev python-psycopg2;
-		apt-get -y install apache2 libapache2-mod-wsgi;
-		apt-get -y install git nodejs devscripts debhelper;
+		apt-get -y install graphite-web graphite-carbon --force-yes;
+		apt-get -y install python-django --force-yes;
+		apt-get -y install postgresql libpq-dev python-psycopg2 --force-yes;
+		apt-get -y install apache2 libapache2-mod-wsgi --force-yes;
+		apt-get -y install git nodejs devscripts debhelper --force-yes;
 		apt-get update;
   
 }
@@ -105,24 +105,26 @@ configure_graphite() {
 		sed -i -e '/USE_REMOTE/ s/^#*/#/' $GRAPHITE_CONF_DIR/local_settings.py; 
 		sed -i -e '/TIME_ZONE/ s/^#*/#/' $GRAPHITE_CONF_DIR/local_settings.py; 
 
-		sed -i -e "s/#SECRET_KEY = 'UNSAFE_DEFAULT'/SECRET_KEY = 'a_salty_string'/" $GRAPHITE_CONF_DIR/local_settings.py;
-		sed -i -e "s/#TIME_ZONE = 'America\/Los_Angeles'/TIME_ZONE = 'Asia\/Kolkata'/" $GRAPHITE_CONF_DIR/local_settings.py
+		echo -e "SECRET_KEY = 'a_salty_string'" >> $GRAPHITE_CONF_DIR/local_settings.py;
+		echo -e "TIME_ZONE = 'Asia/Kolkata'" >> $GRAPHITE_CONF_DIR/local_settings.py;
+# 		sed -i -e '$aSECRET_KEY = 'a_salty_string'' $GRAPHITE_CONF_DIR/local_settings.py;
+# 		sed -i -e '$aTIME_ZONE = 'Asia\/Kolkata'' $GRAPHITE_CONF_DIR/local_settings.py
 		sed -i -e "s/#USE_REMOTE_USER_AUTHENTICATION = True/USE_REMOTE_USER_AUTHENTICATION = True/" $GRAPHITE_CONF_DIR/local_settings.py;
 
-		cat >> $GRAPHITE_CONF_DIR/local_settings.py << EOF
-		DATABASES = {
-			'default': {
-				'NAME': 'graphite',
-				'ENGINE': 'django.db.backends.postgresql_psycopg2',
-				'USER': '',
-				'PASSWORD': '',
-				'HOST': '0.0.0.0',
-				'PORT': ''
-			}
-		}
+cat >> $GRAPHITE_CONF_DIR/local_settings.py << EOF
+DATABASES = {
+	'default': {
+		'NAME': 'graphite',
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		'USER': '',
+		'PASSWORD': '',
+		'HOST': '0.0.0.0',
+		'PORT': ''
+	}
+}
 EOF
 		
-		echo -e "no\n" | graphite-manage.py syncdb || { error_check Graphite-not-configured ${LINENO} ; };
+		echo -e "no\n" | graphite-manage syncdb || { error_check Graphite-not-configured ${LINENO} ; };
 		sed -i -e '/CARBON_CACHE/ s/^#*/#/' /etc/default/graphite-carbon;
 		sed -i -e '$aCARBON_CACHE_ENABLED=true' /etc/default/graphite-carbon;
 		sed -i -e '/ENABLE_LOGROTATION/ s/^#*/#/' $CARBON_CONF_DIR/carbon.conf;
@@ -155,14 +157,14 @@ install_statsd () {
 		service statsd stop;
 		service carbon-cache start;
 		echo -e " " > $STATSD_CONF_DIR/localConfig.js;
-		cat > $STATSD_CONF_DIR/localConfig.js << EOF
-		{
-				graphitePort: 2003
-				, graphiteHost: "localhost"
-				, port: 8125
-				, graphite: {
-				legacyNamespace: false
-		}
+cat > $STATSD_CONF_DIR/localConfig.js << EOF
+{
+		graphitePort: 2003
+		, graphiteHost: "localhost"
+		, port: 8125
+		, graphite: {
+		legacyNamespace: false
+	}
 }
 EOF
 		service carbon-cache stop;

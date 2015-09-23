@@ -130,67 +130,70 @@ validate_IP() {
 ####################################################################################################
 install_JAVA() {
 		echo -e "\t\t1 Installing Java 8\n\n";
-		sudo add-apt-repository -y ppa:webupd8team/java;
-		sudo apt-get update;
-		echo -e debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections;
-		echo -e debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections;
-		sudo apt-get -y install oracle-java8-installer;
-		java -version;
+		add-apt-repository -y ppa:webupd8team/java;
+		apt-get update;
+		echo -e debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections;
+		echo -e debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections;
+		apt-get -y install oracle-java8-installer --force-yes;
+		java -version || { error_check JAVA-not-installed ${LINENO};};
 		sleep 2;
 		clear;
 }
 ####################################################################################################
 install_Elasticsearch() {
 		echo -e "\t\t2 Install Elasticsearch\n\n";
-		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-		echo -e "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
-		sudo apt-get update && sudo apt-get -y install elasticsearch=1.7.1;
+		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+		echo -e "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
+		apt-get update && apt-get -y install elasticsearch=1.7.1;
 		echo -e "\n\nConfiguring elasticsearch";
 		sed -i -e '/cluster.name/ s/^#*/#/' $ES_CONF_FILE;
 		sed -i -e '/network.host/ s/^#*/#/' $ES_CONF_FILE;
-		sudo sed -i -e "s/#cluster.name: elasticsearch/cluster.name: elasticsearch/" $ES_CONF_FILE;
-		sudo sed -i -e "s/#network.host: 192.168.0.1/network.host: 0.0.0.0/" $ES_CONF_FILE;
+		sed -i -e "s/#cluster.name: elasticsearch/cluster.name: elasticsearch/" $ES_CONF_FILE;
+		sed -i -e "s/#network.host: 192.168.0.1/network.host: 0.0.0.0/" $ES_CONF_FILE;
 		echo -e "Starting Elasticsearch on boot up : \n\n";
-		sudo update-rc.d elasticsearch defaults 95 10;
+		update-rc.d elasticsearch defaults 95 10;
 		echo -e "Starting Elasticsearch : \n\n";
-		sudo service elasticsearch restart;
+		service elasticsearch restart;
 # 		echo -e "Checking the status of Elasticsearch : \n\n";
-# 		sudo service elasticsearch status;
+# 		service elasticsearch status;
 		sleep 2;
 		clear;
 }
 ##################################################################################################
 install_Kibana() {
 	echo -e "\t\t3 Install Kibana4\n\n";
-	cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
+	if [ ! -f ~/kibana-4.0.1-linux-x64.tar.gz ]
+	then
+			cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
+	fi
 	tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
 # 	sed -ie "s/host: \"0.0.0.0\"/host: \"$IP_ADDRESS_SERVER\"/" ~/kibana-4.0.1-linux-x64/config/kibana.yml;
-	sudo mkdir -p /opt/kibana;
-	sudo cp -R ~/kibana-4*/* /opt/kibana/;
-	cd ~; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
-	sudo mv ~/kibana4 /etc/init.d;
-	sudo chmod +x /etc/init.d/kibana4;
+	mkdir -p /opt/kibana;
+	cp -R ~/kibana-4*/* /opt/kibana/;
+	cd ~; wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;
+	mv ~/kibana4 /etc/init.d;
+	chmod +x /etc/init.d/kibana4;
 	echo -e "Starting kibana on boot up : \n\n";
-	sudo update-rc.d kibana4 defaults 96 9;
+	update-rc.d kibana4 defaults 96 9;
 	echo -e "Starting kibana : \n\n";
-	sudo service kibana4 start;
+	service kibana4 start;
 # 	echo -e "Checking the status of kibana : \n\n";
-# 	sudo service kibana4 status;
+# 	service kibana4 status;
 	sleep 2;
 	clear;
 }
 ##################################################################################################
 install_Logstash() {
 		echo -e "\t\t4 Install Logstash\n\n";
-		wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-		echo -e "deb http://packages.elasticsearch.org/logstash/1.5/debian stable main" | sudo tee /etc/apt/sources.list.d/logstash.list;
-		sudo apt-get update && sudo apt-get -y install logstash=1:1.5.4-1;
+		wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
+		echo -e "deb http://packages.elasticsearch.org/logstash/1.5/debian stable main" | tee /etc/apt/sources.list.d/logstash.list;
+		apt-get update && apt-get -y install logstash=1:1.5.4-1;
 		echo -e "Generating SSL Certificates\n\n";
-		sudo mkdir -p /etc/pki/tls/certs;
-		sudo mkdir /etc/pki/tls/private;
+		mkdir -p /etc/pki/tls/certs;
+		mkdir /etc/pki/tls/private;
 		echo -e "\n\nConfiguring openssl.cnf";
-		sed -i -e "225isubjectAltName = IP: $ES_LOCAL_IPADDR" /etc/pki/tls/openssl.cnf;
-		sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt;
+		sed -i -e "225isubjectAltName = IP: $ES_LOCAL_IPADDR" /etc/ssl/openssl.cnf || { error_check SSL-certificate-not-created ${LINENO};};
+		openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout /etc/pki/tls/private/logstash-forwarder.key -out /etc/pki/tls/certs/logstash-forwarder.crt;
 		if [ $? -ne 0 ]
 		then
 				echo -e "\nERROR: SSL Certificate is not created";
@@ -204,7 +207,7 @@ configure_Logstash() {
 		echo -e "\t\t5 Configure Logstash\n\n";
 		echo -e " " > /etc/logstash/conf.d/01-lumberjack-input.conf;
 		echo -e "\n\nConfiguring 01-lumberjack-input.conf";
-		sudo sed -i -e "1i input {\
+		sed -i -e "1i input {\
 				\n \tlumberjack { \
 				\n \t\tport => 5000 \
 				\n \t\ttype => \"logs\" \
@@ -216,7 +219,7 @@ configure_Logstash() {
 
 		echo -e " " > /etc/logstash/conf.d/10-syslog.conf;
 		echo -e "\n\nConfiguring 10-syslog.conf";
-		sudo sed -i -e "1i filter { \
+		sed -i -e "1i filter { \
 				\n \tif [type] == \"syslog\" { \
 				\n \tgrok { \
 				\n \t\tmatch => { \"message\" => \"%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}?:\[%{POSINT:syslog_pid}\]?: %{GREEDYDATA:syslog_message}\" } \
@@ -232,7 +235,7 @@ configure_Logstash() {
 
 		echo -e " " > /etc/logstash/conf.d/30-lumberjack-output.conf;
 		echo -e "\n\nConfiguring 30-lumberjack-output.conf";
-		sudo sed -i -e "1i output { \
+		sed -i -e "1i output { \
 				\n \telasticsearch { host => localhost } \
 				\n \tstdout { codec => rubydebug } \
 				\n}" /etc/logstash/conf.d/30-lumberjack-output.conf;
@@ -241,25 +244,25 @@ configure_Logstash() {
 		scp /etc/pki/tls/certs/logstash-forwarder.crt root@$LF_LOCAL_IPADDR:/tmp || { error_check scp-not-done-properly ${LINENO} ; };
 
 		echo -e "Starting logstash : \n\n";
-		sudo service logstash restart;
+		service logstash restart;
 # 		echo -e "Checking the status of logstash : \n\n";
-# 		sudo service logstash status;
+# 		service logstash status;
 		sleep 2;
 		clear;
 }
 ##################################################################################################
 install_Logstash_Forwarder() {
 		echo -e "\t\t6 Install Logstash-Forwarder\n\n";
-		wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -;
-		echo -e "deb http://packages.elasticsearch.org/logstashforwarder/debian stable main" | sudo tee /etc/apt/sources.list.d/logstashforwarder.list;
-		sudo apt-get update && sudo apt-get install logstash-forwarder -y;
-		sudo mkdir -p /etc/pki/tls/certs;
-		sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/;
-		sudo rm /etc/logstash-forwarder.conf;
+		wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -;
+		echo -e "deb http://packages.elasticsearch.org/logstashforwarder/debian stable main" | tee /etc/apt/sources.list.d/logstashforwarder.list;
+		apt-get update && apt-get install logstash-forwarder -y;
+		mkdir -p /etc/pki/tls/certs;
+		cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/;
+		rm /etc/logstash-forwarder.conf;
 		echo -e " " > /etc/logstash-forwarder.conf;
 		echo -e "\n\nConfiguring Logstash-Forwarder.cnf";
 
-		sudo sed -i -e "1i{\
+		sed -i -e "1i{\
 				\n\t\"network\": {\
 				\n\t\t\"servers\": [ \"$ES_LOCAL_IPADDR:5000\" ],\
 				\n\t\t\"ssl ca\": \"/etc/pki/tls/certs/logstash-forwarder.crt\",\
@@ -278,9 +281,9 @@ install_Logstash_Forwarder() {
 
 
 		echo -e "Starting Logstash Forwarder\n\n";
-		sudo service logstash-forwarder start;
+		service logstash-forwarder start;
 # 		echo -e "Checking the status of Logstash Forwarder\n\n";
-# 		sudo service logstash-forwarder status;
+# 		service logstash-forwarder status;
 		sleep 2;
 		clear;
 }
@@ -290,8 +293,8 @@ install_Logstash_Forwarder() {
 validate_args;
 sleep 2;
 clear;
-sudo service elasticsearch status;
-sudo service kibana4 status;
-sudo service logstash status;
-sudo service logstash-forwarder status;
+service elasticsearch status;
+service kibana4 status;
+service logstash status;
+service logstash-forwarder status;
 
