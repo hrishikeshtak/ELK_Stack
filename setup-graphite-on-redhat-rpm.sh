@@ -24,9 +24,6 @@ PYTHON_TXAMQP_TAR_FILE=python-txamqp_0.3.orig.tar.gz;
 PYTHON_TXAMQP_FILE=python-txamqp-0.3;
 TWISTED_TAR_FILE=Twisted-15.4.0.tar.bz2;
 TWISTED_FILE=Twisted-15.4.0;
-
-
-
 ####################################################################################################
 error_check() {
 		echo -e "\nERROR: $SCRIPT_NAME: at Line $2 : $1";
@@ -168,6 +165,7 @@ configure_graphite() {
 
 		echo -e " " > /etc/httpd/conf.d/graphite.conf;
 
+
 		echo -e " " > /etc/httpd/conf.d/wsgi.conf;
 		sed -i -e "1iLoadModule wsgi_module modules/mod_wsgi.so \nWSGISocketPrefix /var/run/wsgi " /etc/httpd/conf.d/wsgi.conf;
 		chown -R apache:apache /opt/graphite/storage/ ;
@@ -179,7 +177,13 @@ configure_graphite() {
 
 }
 ####################################################################################################
+install_statsd () {
+
+
+}
+####################################################################################################
 validate_args;
 install_dependencies;
 install_graphite;
 configure_graphite;
+install_statsd;
