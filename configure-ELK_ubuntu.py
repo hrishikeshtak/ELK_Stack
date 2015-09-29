@@ -47,8 +47,8 @@ def validate_args():
     NODE_ID=sys.argv[3];
     if (NODE_ID == "ELK" or NODE_ID == "elk"):
          print NODE_ID;
-#          configure_Elasticsearch();
-#          configure_Kibana();
+         configure_Elasticsearch();
+         configure_Kibana();
          configure_Logstash();
          command = "service elasticsearch status";
          execute_command(command,None,"elasticsearch not started");
