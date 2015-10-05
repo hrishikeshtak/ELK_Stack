@@ -110,20 +110,6 @@ configure_graphite() {
 # 		sed -i -e '$aSECRET_KEY = 'a_salty_string'' $GRAPHITE_CONF_DIR/local_settings.py;
 # 		sed -i -e '$aTIME_ZONE = 'Asia\/Kolkata'' $GRAPHITE_CONF_DIR/local_settings.py
 		sed -i -e "s/#USE_REMOTE_USER_AUTHENTICATION = True/USE_REMOTE_USER_AUTHENTICATION = True/" $GRAPHITE_CONF_DIR/local_settings.py;
-
-cat >> $GRAPHITE_CONF_DIR/local_settings.py << EOF
-DATABASES = {
-	'default': {
-		'NAME': 'graphite',
-		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'USER': '',
-		'PASSWORD': '',
-		'HOST': '0.0.0.0',
-		'PORT': ''
-	}
-}
-EOF
-		
 		echo -e "no\n" | graphite-manage syncdb || { error_check Graphite-not-configured ${LINENO} ; };
 		sed -i -e '/CARBON_CACHE/ s/^#*/#/' /etc/default/graphite-carbon;
 		sed -i -e '$aCARBON_CACHE_ENABLED=true' /etc/default/graphite-carbon;
