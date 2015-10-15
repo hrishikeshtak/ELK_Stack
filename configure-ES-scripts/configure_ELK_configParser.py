@@ -172,8 +172,6 @@ class Elasticsearch():
         self.execute_command(command,None,"Elasticsearch not configured");
         command = "sudo sed -i -e '/network.host/ s/^#*/#/' %s/elasticsearch.yml;" %ES_CONF_DIR;
         self.execute_command(command,None,"Elasticsearch not configured");
-        command = "sudo sed -i -e '$a cluster.name: elasticsearch' %s/elasticsearch.yml;" %ES_CONF_DIR;
-        self.execute_command(command,None,"Elasticsearch not configured");
         command = "sudo sed -i -e '$a network.host: 0.0.0.0' %s/elasticsearch.yml;" %ES_CONF_DIR;
         self.execute_command(command,None,"Elasticsearch not configured");
 #         print "Starting Elasticsearch on boot up : \n\n";                 
