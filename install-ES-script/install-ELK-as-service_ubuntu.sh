@@ -77,9 +77,9 @@ install_Kibana() {
 	echo -e "\t\t3 Install Kibana4\n\n";
 	if [ ! -f ~/kibana-4.0.1-linux-x64.tar.gz ]
 	then
-			cd ~; wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz;
+			cd ~; wget https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz;
 	fi
-	tar -xvf ~/kibana-4.0.1-linux-x64.tar.gz -C ~;
+	tar -xvf ~/kibana-4.1.2-linux-x64.tar.gz -C ~;
 	mkdir -p /opt/kibana;
 	cp -R ~/kibana-4*/* /opt/kibana/;
 }

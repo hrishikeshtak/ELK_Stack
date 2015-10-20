@@ -19,7 +19,7 @@ KIBANA_CONF_DIR="/opt/kibana/config";
 SSL_CONF_DIR="/etc/ssl"; 
 LOGSTASH_CONF_DIR="/etc/logstash/conf.d";
 LOGSTASH_FORWARDER_CONF_DIR="/etc";
-config_file="/home/hrishi/oc/elasticsearch/Final_ELK_GR_config_scripts/configParser/elasticsearch.ini";
+config_file="elasticsearch.ini";
 ####################################################################################################
 
 # ESConfigParser(config_file);
