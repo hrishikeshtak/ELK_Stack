@@ -4,7 +4,6 @@ import os;
 import subprocess;
 import socket;
 import ConfigParser
-import traceback
 ####################################################################################################
 # Variable Declaration 
 SCRIPT_NAME=sys.argv[0];
@@ -20,15 +19,13 @@ STATSD_CONF_DIR="/etc/statsd";
 ####################################################################################################
 class Graphite():
     @classmethod
-    def ESConfigParser(self,config_file):
+    def GraphiteConfigParser(self,config_file):
         config = ConfigParser.ConfigParser(allow_no_value=True)
         try:
             config.read(config_file)
-#             print config.sections();
             print "Loaded Config File : %s" % config_file
             print "Validating Configutation File..."
             self.validateAllParams(config_file)
-#             print "Validation of configuration file is done..."
         except Exception:
             print traceback.format_exc()
 
@@ -43,18 +40,17 @@ class Graphite():
         global ENABLE_GRAPHITE;
         for section in sectionToBeValidate:
             option_list =  config.options(section)
-#             print option_list;
             if section == "GRAPHITE":
                 optionList = ['enable_graphite', 'graphite_local_ipaddr', 'graphite_web_port']
                 res = cmp(option_list,optionList);
                 if res == 0:
-                    for i in range(0,len(optionList)):
-                        if optionList[i] == "enable_graphite":
-                            ENABLE_GRAPHITE=config.get(section,optionList[i]);
-                        elif optionList[i] == "graphite_local_ipaddr":
-                            GRAPHITE_LOCAL_IPADDR=config.get(section,optionList[i]);
-                        elif optionList[i] == "graphite_web_port":
-                            GRAPHITE_WEB_PORT=config.get(section,optionList[i]);
+                    for paramater in optionList:
+                        if paramater == "enable_graphite":
+                            ENABLE_GRAPHITE=config.get(section,paramater);
+                        elif paramater == "graphite_local_ipaddr":
+                            GRAPHITE_LOCAL_IPADDR=config.get(section,paramater);
+                        elif paramater == "graphite_web_port":
+                            GRAPHITE_WEB_PORT=config.get(section,paramater);
                         else:
                             sys.exit("extra argument in %s") %config_file;
                     if ( ENABLE_GRAPHITE == "True" or ENABLE_GRAPHITE == "true" or ENABLE_GRAPHITE == "TRUE" ):
@@ -67,19 +63,9 @@ class Graphite():
             else:
                 print "Found new section %s. skipping validation for " %section
                 continue
-
-
-
-
-#     @classmethod
-#     def configure_Graphite(self,GRAPHITE_IPADDR,GRAPHITE_PORT):
-#         self.validate_args(GRAPHITE_IPADDR,GRAPHITE_PORT)
-
+####################################################################################################
     @classmethod
     def validate_args(self,GRAPHITE_IPADDR,GRAPHITE_PORT):
-        # check user is ROOT or not
-#         if not os.geteuid() == 0:
-#             sys.exit("User is not root");
         global GRAPHITE_LOCAL_IPADDR;
         global GRAPHITE_WEB_PORT;
         GRAPHITE_LOCAL_IPADDR=GRAPHITE_IPADDR;
@@ -117,14 +103,6 @@ class Graphite():
         self.error_check(return_value,error_message);
 ####################################################################################################
     @classmethod
-    def print_usage(self):
-        print "\nUsage: $0 <GRAPHITE_LOCAL_IPADDR>  <GRAPHITE_WEB_PORT> ";
-        print "    GRAPHITE_LOCAL_IPADDR - IP address where Graphite will be running";
-        print "                         (generally PUBLIC n/w IP of installed node)\n";
-        print "    GRAPHITE_WEB_PORT - Port number ";
-        print "                         (ex 8000)\n";
-###################################################################################################
-    @classmethod
     def error_check(self,return_value,error_message):
         if return_value != 0:
             print "ERROR: ",error_message;
@@ -148,7 +126,7 @@ class Graphite():
         self.execute_command(command,DEVNULL,"configure Graphite not successful");
         command = "sudo sed -i -e '/USE_REMOTE/ s/^#//' %s/local_settings.py;" %GRAPHITE_CONF_DIR;
         self.execute_command(command,None,"configure Graphite not successful");
-        command = "echo -e \"no\\n\" | graphite-manage syncdb;";
+        command = "echo -e \"no\n\" | graphite-manage syncdb;";
         self.execute_command(command,None,"Database is not synced");
         command = "sudo chmod 777 /var/lib/graphite/graphite.db";
         self.execute_command(command,None,"Database is not synced");
@@ -181,9 +159,6 @@ class Graphite():
 ####################################################################################################
     @classmethod
     def configure_apache(self):
-#         print GRAPHITE_WEB_PORT;
-        command = "sudo a2dissite 000-default;";
-        self.execute_command(command,None,"apache not configured");
         command = "sudo cp /usr/share/graphite-web/apache2-graphite.conf /etc/apache2/sites-available;";
         self.execute_command(command,None,"apache not configured");
         command = "sudo sed -i -e 's/80/%s/' /etc/apache2/sites-available/apache2-graphite.conf;" %GRAPHITE_WEB_PORT;
@@ -199,7 +174,6 @@ class Graphite():
 #####################################################################################################
     @classmethod
     def configure_statsd(self):
-#         print STATSD_CONF_DIR;
         command = "echo \" \" | sudo tee %s/localConfig.js;" %STATSD_CONF_DIR;
         self.execute_command(command,DEVNULL,"statsd not configured");
         command = "sudo sed -i -e '1i{\
@@ -216,3 +190,7 @@ class Graphite():
         command = "sudo service statsd status;";
         self.execute_command(command,None,"statsd not configured");
 ####################################################################################################
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit("Please give ini file as argument")
+    Graphite.GraphiteConfigParser(sys.argv[1])

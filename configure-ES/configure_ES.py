@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-import sys;
-import os;
-import subprocess;
-import socket;
+import sys
+import os
+import subprocess
+import socket
 import ConfigParser
-import traceback
 ####################################################################################################
 # Variable Declaration 
 SCRIPT_NAME=sys.argv[0];
@@ -19,22 +18,16 @@ KIBANA_CONF_DIR="/opt/kibana/config";
 SSL_CONF_DIR="/etc/ssl"; 
 LOGSTASH_CONF_DIR="/etc/logstash/conf.d";
 LOGSTASH_FORWARDER_CONF_DIR="/etc";
-config_file="elasticsearch.ini";
 ####################################################################################################
-
-# ESConfigParser(config_file);
-
 class Elasticsearch():
     @classmethod
     def ESConfigParser(self,config_file):
         config = ConfigParser.ConfigParser(allow_no_value=True)
         try:
             config.read(config_file)
-            print config.sections();
             print "Loaded Config File : %s" % config_file
             print "Validating Configutation File..."
             self.validateAllParams(config_file)
-#             print "Validation of configuration file is done..."
         except Exception:
             print traceback.format_exc()
 
@@ -49,18 +42,17 @@ class Elasticsearch():
         global ENABLE_LF;
         for section in sectionToBeValidate:
             option_list =  config.options(section)
-#             print option_list;
             if section == "ELASTICSEARCH":
                 optionList = ['enable_es', 'es_local_ipaddr', 'lf_local_ipaddr']
                 res = cmp(option_list,optionList);
                 if res == 0:
-                    for i in range(0,len(optionList)):
-                        if optionList[i] == "enable_es":
-                            ENABLE_ES=config.get(section,optionList[i]);
-                        elif optionList[i] == "es_local_ipaddr":
-                            ES_LOCAL_IPADDR=config.get(section,optionList[i]);
-                        elif optionList[i] == "lf_local_ipaddr":
-                            LF_LOCAL_IPADDR=config.get(section,optionList[i]);
+                    for parameter in optionList:
+                        if parameter == "enable_es":
+                            ENABLE_ES=config.get(section,parameter);
+                        elif parameter == "es_local_ipaddr":
+                            ES_LOCAL_IPADDR=config.get(section,parameter);
+                        elif parameter == "lf_local_ipaddr":
+                            LF_LOCAL_IPADDR=config.get(section,parameter);
                         else:
                             sys.exit("extra argument in %s") %config_file;
                     if ( ENABLE_ES == "True" or ENABLE_ES == "true" or ENABLE_ES == "TRUE" ):
@@ -74,9 +66,9 @@ class Elasticsearch():
                 optionList = ['enable_lf'];
                 res = cmp(option_list,optionList);
                 if res == 0:
-                    for i in range(0,len(optionList)):
-                        if optionList[i] == "enable_lf":
-                            ENABLE_LF=config.get(section,optionList[i]);
+                    for parameter in optionList:
+                        if parameter == "enable_lf":
+                            ENABLE_LF=config.get(section,parameter);
                         else:
                             sys.exit("extra argument in %s") %config_file;
                     if ( ENABLE_LF == "True" or ENABLE_LF == "true" or ENABLE_LF == "TRUE" ):
@@ -90,21 +82,9 @@ class Elasticsearch():
                 print "Found new section %s. skipping validation for " %section
                 continue
 
-
-#     @classmethod
-#     def configure_ELK(self,ES_IPADDR,LF_IPADDR):
-#         self.validate_args(ES_IPADDR,LF_IPADDR,"ELK")
-
-#     @classmethod
-#     def configure_LF(self,ES_IPADDR,LF_IPADDR):
-#         self.validate_args(ES_IPADDR,LF_IPADDR,"LF")
-
     @classmethod
     def validate_args(self,ES_IPADDR,LF_IPADDR,NODE_ID):
         """ Validation of argument """
-        # check user is ROOT or not
-#         if not os.geteuid() == 0:
-#             sys.exit("User is not root");
         global ES_LOCAL_IPADDR;
         ES_LOCAL_IPADDR= ES_IPADDR;
         global LF_LOCAL_IPADDR;
@@ -149,17 +129,6 @@ class Elasticsearch():
         self.error_check(return_value,error_message);
 ####################################################################################################
     @classmethod
-    def print_usage(self):
-        print  "\nUsage: %s <ES_LOCAL_IPADDR>  <LF_LOCAL_IPADDR> <NODE_ID>" % SCRIPT_NAME;
-        print  "    ES_LOCAL_IPADDR - IP address where Elastic search serves the search requests";
-        print  "                         (generally PUBLIC n/w IP of installed node)\n";
-        print  "    LF_LOCAL_IPADDR - IP address where Logstash-Forwarder installed";
-        print  "                         (generally PUBLIC n/w IP of installed node)\n";
-        print  "    NODE_ID - 1. ELK (Elasticsearch Logstash Kibana) Setup";
-        print  "              2. LF (Logstash-Forwarder) Setup";
-        print  "                         (Enter appropriate choice ELK or LF)\n";
-####################################################################################################
-    @classmethod
     def error_check(self,return_value,error_message):
         if return_value != 0:
             print "ERROR: ",error_message;
@@ -167,29 +136,24 @@ class Elasticsearch():
 ####################################################################################################
     @classmethod
     def configure_Elasticsearch(self):
-#         print  "Configuring Elasticsearch\n\n";
         command = "sudo sed -i -e '/cluster.name/ s/^#*/#/' %s/elasticsearch.yml;" %ES_CONF_DIR;
         self.execute_command(command,None,"Elasticsearch not configured");
         command = "sudo sed -i -e '/network.host/ s/^#*/#/' %s/elasticsearch.yml;" %ES_CONF_DIR;
         self.execute_command(command,None,"Elasticsearch not configured");
         command = "sudo sed -i -e '$a network.host: 0.0.0.0' %s/elasticsearch.yml;" %ES_CONF_DIR;
         self.execute_command(command,None,"Elasticsearch not configured");
-#         print "Starting Elasticsearch on boot up : \n\n";                 
         command = "sudo update-rc.d elasticsearch defaults 95 10";
         self.execute_command(command,None,"elasticsearch not started");
-#         print  "Starting Elasticsearch : \n";
         command = "sudo service elasticsearch restart;";
         self.execute_command(command,None,"elasticsearch not started");
 ###################################################################################################
     @classmethod
     def configure_Kibana(self):
-#         print  "Starting kibana : ";
-#         print "Starting kibana on boot up : \n\n";
         command = "cd ~; wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4;"
         self.execute_command(command,None,"kibana4 not downloaded");
-        command = "mv ~/kibana4 /etc/init.d;"
+        command = "sudo mv ~/kibana4 /etc/init.d;"
         self.execute_command(command,None,"kibana4 not downloaded");
-        command = "chmod +x /etc/init.d/kibana4;"
+        command = "sudo chmod +x /etc/init.d/kibana4;"
         self.execute_command(command,None,"kibana4 not downloaded");
         command = "sudo update-rc.d kibana4 defaults 96 9;"
         self.execute_command(command,None,"kibana4 not started");
@@ -198,13 +162,10 @@ class Elasticsearch():
 ###################################################################################################
     @classmethod
     def configure_Logstash(self):
-#         print  "Configuring Logstash";
-# 	print  "Generating SSL Certificates";
 	command = "sudo mkdir -p /etc/pki/tls/certs;";
 	self.execute_command(command,None,"Logstash not configured");
 	command = "sudo mkdir -p /etc/pki/tls/private;";
 	self.execute_command(command,None,"Logstash not configured");
-# 	print  "Configuring openssl.cnf";
 	command = "sudo sed -i -e '/subjectAltName/ s/^#*/#/' %s/openssl.cnf;" %SSL_CONF_DIR;
 	self.execute_command(command,None,"Logstash not configured");
 	command = "sudo sed -i -e \"226isubjectAltName = IP: %s" %ES_LOCAL_IPADDR;
@@ -215,7 +176,6 @@ class Elasticsearch():
 	self.execute_command(command,None,"openssl not configured");
 	command = 'echo " " | sudo tee %s/01-lumberjack-input.conf;' %LOGSTASH_CONF_DIR;
 	self.execute_command(command,DEVNULL,None);
-# 	print  "Configuring 01-lumberjack-input.conf";
         command = "cat << EOF | sudo tee %s/01-lumberjack-input.conf\n" %LOGSTASH_CONF_DIR;
         command1 = "input {\
                 \n \tlumberjack { \
@@ -230,7 +190,6 @@ class Elasticsearch():
 	self.execute_command(command,DEVNULL,"01-lumberjack-input.conf not configured");
 	command = 'echo " " | sudo tee %s/10-syslog.conf;' %LOGSTASH_CONF_DIR;
 	self.execute_command(command,DEVNULL,None);
-# 	print  "Configuring 10-syslog.conf";
         command = "cat << EOF | sudo tee %s/10-syslog.conf\n" %LOGSTASH_CONF_DIR;
 	command1 = "filter { \
                 \n \tif [type] == \"syslog\" { \
@@ -250,7 +209,6 @@ class Elasticsearch():
 	self.execute_command(command,DEVNULL,"10-syslog.conf not configured");
 	command = 'echo " " | sudo tee %s/30-lumberjack-output.conf;' %LOGSTASH_CONF_DIR;
 	self.execute_command(command,DEVNULL,None);
-#         print  "Configuring 30-lumberjack-output.conf";
         command = "cat << EOF | sudo tee %s/30-lumberjack-output.conf\n" %LOGSTASH_CONF_DIR; 
         command1 = "output { \
                 \n \telasticsearch { host => localhost } \
@@ -259,19 +217,15 @@ class Elasticsearch():
 	\nEOF";
         command = command + command1;
 	self.execute_command(command,DEVNULL,"30-lumberjack-output.conf not configured");
-# 	print  "Coping SSL Certificate \n";
 	command = "scp /etc/pki/tls/certs/logstash-forwarder.crt root@%s:/tmp" %LF_LOCAL_IPADDR;
 	self.execute_command(command,None,"certificate not copy to %s" %LF_LOCAL_IPADDR);
-#         print "Starting Logstash on boot up : \n\n";
         command = "sudo update-rc.d logstash defaults 95 10";
         self.execute_command(command,None,"Logstash not started");
-# 	print  "Starting logstash : ";
 	command = "sudo service logstash restart";
 	self.execute_command(command,None,"Logstash not started");
 ##################################################################################################
     @classmethod
     def configure_Logstash_Forwarder(self):
-#         print "Configuring Logstash_Forwarder";
 	command = "sudo mkdir -p /etc/pki/tls/certs;";
 	self.execute_command(command,None,"Logstash_Forwarder not configured");
 	command = "sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/;";
@@ -300,11 +254,13 @@ class Elasticsearch():
 	\nEOF" %ES_LOCAL_IPADDR;
     	command = command + command1;
 	self.execute_command(command,DEVNULL,"logstash-forwarder.conf not configured");
-#         print "Starting Logstash-forwarder on boot up : \n\n";
         command = "sudo update-rc.d logstash-forwarder defaults 95 10";
         self.execute_command(command,None,"Logstash_Forwarder not started");
-# 	print  "Starting Logstash Forwarder";
 	command = "sudo service logstash-forwarder restart;";
 	self.execute_command(command,None,"Logstash_Forwarder not started");
 
 ######################################################################################################
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit("Please give ini file as argument")
+    Elasticsearch.ESConfigParser(sys.argv[1])
