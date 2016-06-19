@@ -2,8 +2,6 @@
 
 #### Install Elasticsearch, Logstash, and Kibana
 
-We will cover the installation of the Elasticsearch ELK Stack on Ubuntu 14.04 that is, Elasticsearch , Logstash , and Kibana 4. We will also show you how to configure it to gather and visualize the syslogs of your systems in a centralized location.
-
 Our setup has four main components:
   
   1. Logstash: Logstash is an open source tool for collecting, parsing, and storing logs for future use
